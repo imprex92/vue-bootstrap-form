@@ -1,7 +1,6 @@
 <template>
 	<div class="container p-3">
 		<div class="container form-container m-auto">
-			<button @click="modeChange" class="btn btn-primary mb-3"><span v-if="!alreadyUser">Already a user</span><span v-else>Register</span></button>
 			<div v-show="!alreadyUser">
 				<div class="">
 					<p class="form-section-description">Information about yourself and company name</p>
@@ -10,24 +9,24 @@
 			<form>
 				<div class="form-row">
 					<div class="form-group col-md-4">
-						<label for="fName">Firstname</label>
-						<input autocomplete="name" v-model="userInfo.fName" type="text" class="form-control" id="fName">
-					</div>
-					<div class="form-group col-md-4">
-						<label for="lName">Lastname</label>
-						<input autocomplete="family-name" v-model="userInfo.lName" type="text" class="form-control" id="lName">
-					</div>
-					<div class="form-group col-md-4">
 						<label for="supplierName">Supplier name</label>
 						<input autocomplete="organization" v-model.lazy="userInfo.supplierName" type="text" class="form-control" id="supplierName">
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-4">
-						<label for="inputTel">Telephone</label>
-						<input v-model.number="userInfo.tel" maxlength="14" autocomplete="tel" class="form-control" type="tel" placeholder="1-(555)-555-5555" id="inputTel" number>
+					<div class="form-group col-md-2">
+						<label for="inputType">Type</label>
+						<select v-model="userInfo.type" id="inputType" class="form-control">
+							<option selected>Choose...</option>
+							<option>Hotel</option>
+							<option>Excursion provider</option>
+							<option>Bus company</option>
+							<option>Restaurant</option>
+							<option>Wholesaler</option>
+						</select>
 					</div>
 				</div>
+			<div v-if="userInfo.type !== 'Choose...'">
 				<div>
 					<p class="form-section-description">Information about <span v-if="userInfo.supplierName === null || userInfo.supplierName === ''">your company</span><span v-else>{{userInfo.supplierName}}</span></p>
 					<hr>
@@ -35,7 +34,7 @@
 				<div class="form-row">
 					<div class="form-group col-md-6">
 						<label for="inputAddressAutocomplet">Autocomplete your address</label>
-						<client-only>
+						<!-- <client-only>
 							<place-autocomplete-field
 								autocomplete="address-line1"
 								id="inputAddressAutocomplet"
@@ -49,6 +48,18 @@
 								v-place-autofill:latitude="userInfo.geo.lat"
 								v-place-autofill:longitude="userInfo.geo.long">
 							</place-autocomplete-field>
+						</client-only> -->
+						<client-only>
+							<div v-if="field1" class="alert alert-info">
+    Current Value: {{field1}}
+</div>
+							<place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyDHL-FHcfS_ZS5RrlZxvKSoT42-gTCxy_M" v-place-autofill:street="userInfo.address"
+								v-place-autofill:city="userInfo.city"
+								v-place-autofill:state="userInfo.state"
+								v-place-autofill:zipcode="userInfo.zip"
+								v-place-autofill:country="userInfo.country"
+								v-place-autofill:latitude="userInfo.geo.lat"
+								v-place-autofill:longitude="userInfo.geo.long"></place-autocomplete-field>
 						</client-only>
 					</div>
 				</div>
@@ -94,19 +105,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-2">
-						<label for="inputType">Type</label>
-						<select v-model="userInfo.type" id="inputType" class="form-control">
-							<option selected>Choose...</option>
-							<option>Hotel</option>
-							<option>Excursion provider</option>
-							<option>Bus company</option>
-							<option>Restaurant</option>
-							<option>Wholesaler</option>
-						</select>
-					</div>
-				</div>
+				
 
 				<div class="form-row hotel-section">
 					<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
@@ -169,11 +168,20 @@
 				</div>
 					</client-only>
 
-				<div v-if="userInfo.type !== 'Bus company' && userInfo.type !== 'Choose...'" class="from-row">
+				<div v-if="userInfo.type === 'Wholesaler'" class="from-row">
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
 							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.priceRange" v-bind="options"></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="wholesalerOptions"></vue-slider>
+							<p>{{ userInfo.priceRange }}</p>
+						</div>
+					</div>
+				</div>
+				<div v-if="userInfo.type === 'Hotel'" class="from-row">
+					<div class="form-row col-md-12">
+						<div class="form-group col-md-4">
+							<label for="price-slider">Enter price range for groups</label>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="hotelOptions"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 					</div>
@@ -191,42 +199,17 @@
 							<pre class="language-json"><code>{{ userInfo.selectedCountries  }}</code></pre>
 						</client-only>
 					</div>
-				</div>				
-				<div>
-					<p class="form-section-description">Create your own login</p>
-					<hr>
 				</div>
-				<div class="form-row">
+				<!-- <div class="form-row">
 					<div class="form-group col-md-6">
 						<label for="create-userName">Enter E-mail</label>
 						<input autocomplete="password" v-model="userInfo.email" type="text" class="form-control" id="create-userName">
 					</div>
-					<div class="form-group col-md-6">
-						<label for="create-password">Create password</label>
-						<input autocomplete="current-password" v-model="userInfo.password" type="password" class="form-control" id="create-password">
-					</div>
-				</div>
+				</div> -->
   			<button @click.prevent="onSubmit" type="submit" class="btn btn-primary col-md-2 mt-2 mb-3">Submit</button>
-			</form>
 			</div>
-			<div v-show="alreadyUser">
-				<div>
-					<p class="form-section-description">Enter login information</p>
-					<hr>
-				</div>
-				<form @submit.prevent="onSubmit">
-					<div class="form-row">
-						<div class="form-group col-md-4">
-							<label for="userName">E-mail</label>
-							<input autocomplete="password" v-model="userInfo.email" type="text" class="form-control" id="userName">
-						</div>
-						<div class="form-group col-md-4">
-							<label for="password">Password</label>
-							<input autocomplete="current-password" v-model="userInfo.password" type="password" class="form-control" id="password">
-						</div>
-					<button type="submit" class="btn btn-primary col-md-2 login-btn">Log in</button>
-					</div>
-				</form>
+			</form>
+			
 			</div>
 			<div>{{userInfo}}</div>
 			<div>
@@ -267,6 +250,7 @@ export default {
 			counter: 1,
 			isAuthorized: false,
 			alreadyUser: false,
+			field1: '',
 			userInfo: {
 				fName: null,
 				lName: null,
@@ -279,7 +263,8 @@ export default {
 				geo: { long: null, lat: null },
 				maxTravelers: 'Choose...',
 				roomsAvailable: null,
-				priceRange: [10, 42],
+				hotelPriceRange: [10, 150],
+				wholePriceRange: [0, 2000],
 				type: 'Choose...',
 				selectedCountries: [],
 				busSettings:[ {id: 1, busType: null, busSeats: null, busPrice: null}],	
@@ -291,8 +276,49 @@ export default {
 				password: null
 			},
 			// slider
-			priceRange: [0, 50],
-			options: {
+			// priceRange: [0, 50],
+			hotelOptions: {
+				dotSize: 14,
+				width: 'auto',
+				height: 4,
+				contained: false,
+				direction: 'ltr',
+				data: null,
+				dataLabel: 'label',
+				dataValue: 'value',
+				min: 10,
+				max: 150,
+				interval: 1,
+				disabled: false,
+				clickable: true,
+				duration: 0.5,
+				adsorb: false,
+				lazy: false,
+				tooltip: 'active',
+				tooltipPlacement: 'top',
+				tooltipFormatter: '{value}€',
+				useKeyboard: false,
+				keydownHook: null,
+				dragOnClick: false,
+				enableCross: false,
+				fixed: false,
+				minRange: void 0,
+				maxRange: void 0,
+				order: true,
+				marks: false,
+				dotOptions: void 0,
+				dotAttrs: void 0,
+				process: true,
+				dotStyle: void 0,
+				railStyle: void 0,
+				processStyle: void 0,
+				tooltipStyle: void 0,
+				stepStyle: void 0,
+				stepActiveStyle: void 0,
+				labelStyle: void 0,
+				labelActiveStyle: void 0,
+			  },
+			  wholesalerOptions: {
 				dotSize: 14,
 				width: 'auto',
 				height: 4,
@@ -302,8 +328,8 @@ export default {
 				dataLabel: 'label',
 				dataValue: 'value',
 				min: 0,
-				max: 50,
-				interval: 1,
+				max: 2000,
+				interval: 10,
 				disabled: false,
 				clickable: true,
 				duration: 0.5,
