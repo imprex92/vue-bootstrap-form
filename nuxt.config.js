@@ -12,7 +12,8 @@ export default {
     ],
     script: [
       {
-        src: 'https://www.jsdelivr.com/package/npm/vue-place-autocomplete'
+        src: 'https://www.jsdelivr.com/package/npm/vue-place-autocomplete',
+        src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDHL-FHcfS_ZS5RrlZxvKSoT42-gTCxy_M&libraries=places"
       }
     ],
   },
@@ -24,7 +25,8 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
       {src: '~/plugins/vue-place-autocomplete.js', ssr: false},
-      {src: '~/plugins/vue-multiselect.js', ssr: false}
+      {src: '~/plugins/vue-multiselect.js', ssr: false},
+      { src: '~plugins/vue-google-autocomplete', ssr: false }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -55,7 +57,9 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
-    transpile: ['vue-place-autocomplete', 'VuePlaceAutocomplete']
+    transpile: [
+      'vue-place-autocomplete', 'VuePlaceAutocomplete', 'vue-google-autocomplete'
+    ]
   },
   
 }

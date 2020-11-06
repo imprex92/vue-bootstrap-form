@@ -33,63 +33,48 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<label for="inputAddressAutocomplet">Autocomplete your address</label>
-						<!-- <client-only>
-							<place-autocomplete-field
-								autocomplete="address-line1"
-								id="inputAddressAutocomplet"
-								api-key="AIzaSyDHL-FHcfS_ZS5RrlZxvKSoT42-gTCxy_M"
-								placeholder="Enter an address, zipcode, or location"
-								v-place-autofill:street="userInfo.address"
-								v-place-autofill:city="userInfo.city"
-								v-place-autofill:state="userInfo.state"
-								v-place-autofill:zipcode="userInfo.zip"
-								v-place-autofill:country="userInfo.country"
-								v-place-autofill:latitude="userInfo.geo.lat"
-								v-place-autofill:longitude="userInfo.geo.long">
-							</place-autocomplete-field>
-						</client-only> -->
-						<client-only>
-							<div v-if="field1" class="alert alert-info">
-    Current Value: {{field1}}
-</div>
-							<place-autocomplete-field v-model="field1" placeholder="Enter an an address, zipcode, or location" label="Address" name="field1" api-key="AIzaSyDHL-FHcfS_ZS5RrlZxvKSoT42-gTCxy_M" v-place-autofill:street="userInfo.address"
-								v-place-autofill:city="userInfo.city"
-								v-place-autofill:state="userInfo.state"
-								v-place-autofill:zipcode="userInfo.zip"
-								v-place-autofill:country="userInfo.country"
-								v-place-autofill:latitude="userInfo.geo.lat"
-								v-place-autofill:longitude="userInfo.geo.long"></place-autocomplete-field>
-						</client-only>
+					
 					</div>
+					<div class="message is-success" v-show="userInfo.address">
+                <div class="message-body">{{ userInfo.address }}</div>
+            </div>
 				</div>
 						<hr>
 					<div class="form-group">
-						<label for="inputAddress">Address</label>
-						<input autocomplete="address-line1" v-model="userInfo.address" type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+						<label for="map">Address</label>
+						<client-only>
+						<vue-google-autocomplete
+						id="map"
+						autocomplete="address-line1"
+						ref="userInfo.address"
+						classname="form-control"
+						placeholder="Start typing"
+						v-on:placechanged="getAddressData">
+						</vue-google-autocomplete>
+						</client-only>
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label for="inputAddress2">Address 2</label>
 						<input autocomplete="address-line2" type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-					</div>
+					</div> -->
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label for="inputCity">City</label>
-						<input autocomplete="address-level2" v-model="userInfo.city" type="text" class="form-control" id="inputCity">
+						<input autocomplete="address-level2" v-model="userInfo.address.locality" type="text" class="form-control" id="inputCity">
 					</div>
 					<div class="form-group col-md-3">
 						<label for="inputState">State</label>
-						<input autocomplete="address-level1" v-model="userInfo.state" type="text" class="form-control" id="inputState">
+						<input autocomplete="address-level1" v-model="userInfo.address.administrative_area_level_1" type="text" class="form-control" id="inputState">
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-3">
 						<label for="inputZip">Zip</label>
-						<input autocomplete="postal-code" v-model="userInfo.zip" type="text" class="form-control" id="inputZip">
+						<input autocomplete="postal-code" v-model="userInfo.address.postal_code" type="text" class="form-control" id="inputZip">
 					</div>
 					<div class="form-group col-md-3">
 						<label for="inputCountry">Country</label>
-						<input autocomplete="country-name" v-model="userInfo.country" type="text" class="form-control" id="inputCountry">
+						<input autocomplete="country-name" v-model="userInfo.address.country" type="text" class="form-control" id="inputCountry">
 					</div>
 				</div>
 				<div class="form-row">
@@ -143,26 +128,18 @@
 					</div>
 				</div>
 					<client-only>
+						<!-- TODO -->
 				<div v-if="userInfo.type === 'Bus company'">
-					<button @click.prevent="addBus" class="btn btn-primary col-md-2 mt-2 mb-3">Add another bus</button>
-					<div v-for="(bus, counter) in userInfo.busSettings" v-bind:key="counter" class="form-row bus-section mb-3 mt-3">							
-						<div  class="form-group col-md-2">
-							<label for="inputBusType">{{counter + 1}}. Bustype</label>
-							<input v-model="userInfo.busSettings[counter].busType" id="inputBusType" class="form-control">
+					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
+						<div class="form-group col-md-4">
+							<label for="price-slider">Enter price range for groups</label>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="wholesalerOptions"></vue-slider>
+							<p>{{ userInfo.priceRange }}</p>
 						</div>
-						<div class="form-group col-md-2">
-							<label for="inputBusSeats">Seats</label>
-							<input v-model="userInfo.busSettings[counter].busSeats" type="number" class="form-control" id="inputBusSeats">
-						</div>
-						<div class="form-group col-md-2">
-							<label for="inputBusPrice">Bus price </label>
-							
-							<input v-model="userInfo.busSettings[counter].busPrice" type="number" class="form-control" id="inputBusPrice">
-						</div>
-						<div class="form-group col-md-1">
-							<span class="d-flex" @click="deleteBus(counter)">
-								<img class="remove-button justify-content-between" src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjUxMS45OTk5OHB0IiB2aWV3Qm94PSIxIDEgNTExLjk5OTk4IDUxMS45OTk5OCIgd2lkdGg9IjUxMS45OTk5OHB0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Im0yNTYgMGMtMTQxLjM4NjcxOSAwLTI1NiAxMTQuNjEzMjgxLTI1NiAyNTZzMTE0LjYxMzI4MSAyNTYgMjU2IDI1NiAyNTYtMTE0LjYxMzI4MSAyNTYtMjU2Yy0uMTY3OTY5LTE0MS4zMTY0MDYtMTE0LjY4MzU5NC0yNTUuODMyMDMxLTI1Ni0yNTZ6bTAgNDgwYy0xMjMuNzEwOTM4IDAtMjI0LTEwMC4yODkwNjItMjI0LTIyNHMxMDAuMjg5MDYyLTIyNCAyMjQtMjI0IDIyNCAxMDAuMjg5MDYyIDIyNCAyMjRjLS4xMzI4MTIgMTIzLjY1NjI1LTEwMC4zNDM3NSAyMjMuODY3MTg4LTIyNCAyMjR6bTAgMCIvPjxwYXRoIGQ9Im0zODAuNDQ5MjE5IDEzMS41NTA3ODFjLTYuMjUtNi4yNDYwOTMtMTYuMzc4OTA3LTYuMjQ2MDkzLTIyLjYyNSAwbC0xMDEuODI0MjE5IDEwMS44MjQyMTktMTAxLjgyNDIxOS0xMDEuODI0MjE5Yy02LjE0MDYyNS02LjM1NTQ2OS0xNi4yNjk1MzEtNi41MzEyNS0yMi42MjUtLjM5MDYyNS02LjM1NTQ2OSA2LjEzNjcxOS02LjUzMTI1IDE2LjI2NTYyNS0uMzkwNjI1IDIyLjYyMTA5NC4xMjg5MDYuMTMyODEyLjI1NzgxMy4yNjU2MjUuMzkwNjI1LjM5NDUzMWwxMDEuODI0MjE5IDEwMS44MjQyMTktMTAxLjgyNDIxOSAxMDEuODI0MjE5Yy02LjM1NTQ2OSA2LjEzNjcxOS02LjUzMTI1IDE2LjI2NTYyNS0uMzkwNjI1IDIyLjYyNSA2LjEzNjcxOSA2LjM1NTQ2OSAxNi4yNjU2MjUgNi41MzEyNSAyMi42MjEwOTQuMzkwNjI1LjEzMjgxMi0uMTI4OTA2LjI2NTYyNS0uMjU3ODEzLjM5NDUzMS0uMzkwNjI1bDEwMS44MjQyMTktMTAxLjgyNDIxOSAxMDEuODI0MjE5IDEwMS44MjQyMTljNi4zNTU0NjkgNi4xMzY3MTkgMTYuNDg0Mzc1IDUuOTYwOTM3IDIyLjYyMTA5My0uMzk0NTMxIDUuOTg4MjgyLTYuMTk5MjE5IDUuOTg4MjgyLTE2LjAzMTI1IDAtMjIuMjMwNDY5bC0xMDEuODIwMzEyLTEwMS44MjQyMTkgMTAxLjgyNDIxOS0xMDEuODI0MjE5YzYuMjQ2MDkzLTYuMjQ2MDkzIDYuMjQ2MDkzLTE2LjM3NSAwLTIyLjYyNXptMCAwIi8+PC9zdmc+"/>	
-							</span>
+						<div class="form-group col-md-4">
+							<label for="price-slider">Enter price range for groups</label>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="wholesalerOptions"></vue-slider>
+							<p>{{ userInfo.priceRange }}</p>
 						</div>											
 					</div>
 				</div>
@@ -222,6 +199,7 @@
 
 <script>
 import VueSlider from 'vue-slider-component/dist-css/vue-slider-component.umd.min.js'
+import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import 'vue-slider-component/dist-css/vue-slider-component.css'
 import 'vue-slider-component/theme/default.css'
 import "vue-multiselect/dist/vue-multiselect.min.css"
@@ -241,7 +219,8 @@ export default {
 		]
   	},
 	components: {
-		VueSlider
+		VueSlider,
+		VueGoogleAutocomplete: () => import('vue-google-autocomplete')
 	},
  	data() {
 		return {
@@ -252,10 +231,10 @@ export default {
 			alreadyUser: false,
 			field1: '',
 			userInfo: {
+				address: { route: "", locality: "", administrative_area_level_1: "", country: "", postal_code: "null", latitude: null, longitude: null },
 				fName: null,
 				lName: null,
 				supplierName: null,
-				address: null,
 				city: null,
 				state: null,
 				country: null,
@@ -267,7 +246,7 @@ export default {
 				wholePriceRange: [0, 2000],
 				type: 'Choose...',
 				selectedCountries: [],
-				busSettings:[ {id: 1, busType: null, busSeats: null, busPrice: null}],	
+				busSettings: { busSeats: [10, 100], busPrice: [0, 1000] },	
 				offerDate: null,
 				stars: 'Choose...',
 				filePDF: null,
@@ -364,6 +343,36 @@ export default {
   created() {
   },
   	methods: {
+		  /**
+        * When the location found
+        * @param {Object} addressData Data of the found location
+        * @param {Object} placeResultData PlaceResult object
+        * @param {String} id Input container ID
+        */
+		getAddressData(addressData, placeResultData, id) {
+			if(addressData.locality){
+				console.log('locality finns redan mer!');
+				this.userInfo.address = addressData
+				console.log(addressData);
+				console.log(placeResultData);
+				console.log(this.userInfo.address);
+				console.log(this.userInfo.address.country);
+			}
+			else{
+
+				console.log('locality finns inte, tar från plan B');
+				this.userInfo.address = addressData
+				this.userInfo.address.locality = placeResultData.address_components[2].long_name
+				console.log(addressData);
+				console.log(placeResultData);
+				console.log(this.userInfo.address);
+				console.log(this.userInfo.address.country);
+			}
+
+			//finns locality i addressdat?
+			//om ej gå igenom placeresultdata och leta efter sublocality
+			//skapa adressdata.locality = sublocality
+    	},
 		created: function (){
 			
 		},
@@ -376,22 +385,6 @@ export default {
 		previewFiles(){
 			this.userInfo.filePDF = this.$refs.myFiles.files[0]
 			console.log(this.$refs.myFiles.files[0]);
-		},
-		modeChange(){
-			this.alreadyUser = !this.alreadyUser
-		},
-		addBus(){
-			this.counter++
-			this.userInfo.busSettings.push({
-				id: this.counter,
-				busType: null,
-				busSeats: null,
-				busPrice: null
-    		})
-		},
-		deleteBus(counter){ 
-			this.counter--
-    		this.userInfo.busSettings.splice(counter,1);
 		},
 		limitText (count) {
       return `and ${count} other countries`
