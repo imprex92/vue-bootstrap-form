@@ -341,7 +341,7 @@ export default {
       		}
 		}
   },
-created() {
+mounted() {
 	console.log('Goodmorning');
 	if(this.$route.query.id){
 		console.log('id found! ', this.$route.query.id);
