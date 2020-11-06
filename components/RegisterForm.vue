@@ -49,7 +49,8 @@
 						ref="userInfo.address"
 						classname="form-control"
 						placeholder="Start typing"
-						v-on:placechanged="getAddressData">
+						v-on:placechanged="getAddressData"
+						v-model="userInfo.address.route">
 						</vue-google-autocomplete>
 						</client-only>
 					</div>
@@ -79,7 +80,7 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<textarea name="" id="" class="form-control" rows="3" placeholder="Enter comment or dates the offer is available"></textarea>
+						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Enter comment or dates the offer is available"></textarea>
 					</div>
 				</div>
 				<div class="form-row">
@@ -224,22 +225,22 @@ export default {
 	},
  	data() {
 		return {
+			userExisting: true,
+			userID: null,
 			countries: [],
 			isLoading: false,
-			counter: 1,
-			isAuthorized: false,
 			alreadyUser: false,
-			field1: '',
 			userInfo: {
 				address: { route: "", locality: "", administrative_area_level_1: "", country: "", postal_code: "null", latitude: null, longitude: null },
-				fName: null,
-				lName: null,
+				// fName: null,
+				// lName: null,
 				supplierName: null,
-				city: null,
-				state: null,
-				country: null,
-				zip: null,
-				geo: { long: null, lat: null },
+				// city: null,
+				// state: null,
+				// country: null,
+				// zip: null,
+				// geo: { long: null, lat: null },
+				comments: null,
 				maxTravelers: 'Choose...',
 				roomsAvailable: null,
 				hotelPriceRange: [10, 150],
@@ -250,9 +251,9 @@ export default {
 				offerDate: null,
 				stars: 'Choose...',
 				filePDF: null,
-				tel: null,
-				email: null,
-				password: null
+				// tel: null,
+				// email: null,
+				// password: null
 			},
 			// slider
 			// priceRange: [0, 50],
@@ -340,7 +341,31 @@ export default {
       		}
 		}
   },
-  created() {
+created() {
+	console.log('Goodmorning');
+	if(this.$route.query.id){
+		console.log('id found! ', this.$route.query.id);
+		this.userID = this.$route.query.id
+		this.$axios.get(`https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-get/${this.userID}`)
+			.then((Response) => {
+				console.log(Response)
+				console.log(`Successfully found user ${this.userID}!`)
+				if(Response.data.success){
+				this.userInfo = Response.data.data
+				console.log(this.userInfo);
+				}else{
+					console.log('something is wrong');
+					alert('User does not exist!');
+					this.userExisting = false
+					}
+			})
+			.catch((err) => {
+				console.log(err)
+				console.log('User does not exist ', err)
+			})
+	}else{
+		console.log('User does not exist! ', this.$route.query.id);
+	}
   },
   	methods: {
 		  /**
@@ -362,13 +387,13 @@ export default {
 
 				console.log('locality finns inte, tar från plan B');
 				this.userInfo.address = addressData
+				console.log(addressData);
+				console.log(placeResultData);
+				console.log(this.userInfo.address);
+				console.log(this.userInfo.address.country);
 				let findCity = placeResultData.address_components.find(el => el.types.includes("postal_town"));
 				this.userInfo.address.locality = findCity.long_name
 				console.log('this is the found city ', findCity.long_name );
-				// console.log(addressData);
-				// console.log(placeResultData);
-				// console.log(this.userInfo.address);
-				// console.log(this.userInfo.address.country);
 			}
 
 			//finns locality i addressdat?
@@ -376,13 +401,19 @@ export default {
 			//skapa adressdata.locality = sublocality
     	},
 		created: function (){
-			
+			console.log('Goodmorning');
 		},
 		onSubmit(){
 			console.log(this.userInfo);
-			this.$axios.post('api/api/api', this.userInfo)
-				.then((Response) => {console.log(Response)})
-				.catch((err) => {console.log(err)})
+			this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
+				.then((Response) => {
+					console.log(Response)
+					alert('Successful!')
+				})
+				.catch((err) => {
+					console.log(err)
+					alert('Something went wrong ', err)
+				})
 		},
 		previewFiles(){
 			this.userInfo.filePDF = this.$refs.myFiles.files[0]
