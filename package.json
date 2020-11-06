@@ -16,6 +16,7 @@
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
     "vue-functional-calendar": "^2.8.88",
+    "vue-google-autocomplete": "^1.1.0",
     "vue-multiselect": "^2.1.6",
     "vue-place-autocomplete": "^0.5.3",
     "vue-slider-component": "^3.2.9"
