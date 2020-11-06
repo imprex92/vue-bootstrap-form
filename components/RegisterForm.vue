@@ -1,7 +1,10 @@
 <template>
 	<div class="container p-3">
 		<div class="container form-container m-auto">
-			<div v-show="!alreadyUser">
+			<div v-show="registerSuccessful" class="">
+				<p class="successful-message">Thanks for registering. We also sent you a confirmation by email</p>
+			</div>
+			<div v-show="showForm">
 				<div class="">
 					<p class="form-section-description">Information about yourself and company name</p>
 					<hr>
@@ -189,7 +192,7 @@
 			</form>
 			
 			</div>
-			<div>{{userInfo}}</div>
+			<!-- <div>{{userInfo}}</div> -->
 			<div>
 				<!-- <multiselect v-model="multiselectValue" :options="multiselectOptions"></multiselect> -->
 				
@@ -229,7 +232,8 @@ export default {
 			userID: null,
 			countries: [],
 			isLoading: false,
-			alreadyUser: false,
+			registerSuccessful: false,
+			showForm: true,
 			userInfo: {
 				address: { route: null, locality: null, administrative_area_level_1: null, country: null, postal_code: null, latitude: null, longitude: null },
 				supplierName: null,
@@ -356,7 +360,9 @@ mounted() {
 			this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
 				.then((Response) => {
 					console.log(Response)
-					alert('Successful!')
+					// alert('Successful!')
+					this.showForm = false
+					this.registerSuccessful = true
 				})
 				.catch((err) => {
 					console.log(err)
@@ -386,6 +392,12 @@ mounted() {
 </script>
 
 <style lang="css" scoped>
+.successful-message{
+	text-align: center;
+	margin: auto;
+	font-weight: bold;
+	padding-top: 50vh;
+}
 .form-section-description{
   font-size: 1.5em;
   margin-top: 0.83em;
