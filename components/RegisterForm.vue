@@ -135,12 +135,12 @@
 						<!-- TODO -->
 				<div v-if="userInfo.type === 'Bus company'">
 					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
-						<div class="form-group col-md-4">
+						<div class="form-group col-md-4 pr-3">
 							<label for="seats-slider">Seats</label>
 							<vue-slider id="seats-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="sliderOptions" :tooltipFormatter="'{value}'" ></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
-						<div class="form-group col-md-4">
+						<div class="form-group col-md-4 ml-3">
 							<label for="price-slider">Daily price range</label>
 							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="sliderOptions" :min="0" :max="1000" :interval="10" ></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
@@ -245,7 +245,6 @@ export default {
 				type: 'Choose...',
 				selectedCountries: [],
 				busSettings: { busSeats: [10, 100], busPrice: [0, 1000] },	
-				offerDate: null,
 				stars: 'Choose...',
 				filePDF: null,
 			},
