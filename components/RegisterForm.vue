@@ -107,7 +107,7 @@
 							<option>7 Stars</option>
 						</select>
 					</div>
-					<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...'" class="form-group col-md-3">
+					<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel'" class="form-group col-md-3">
 						<label for="inputTravelers">Max travelers</label>
 						<select v-model="userInfo.maxTravelers" id="inputTravelers" class="form-control">
 							<option selected>Choose...</option>
@@ -133,13 +133,13 @@
 				<div v-if="userInfo.type === 'Bus company'">
 					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
 						<div class="form-group col-md-4">
-							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="wholesalerOptions"></vue-slider>
+							<label for="seats-slider">Seats</label>
+							<vue-slider id="seats-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="sliderOptions" :tooltipFormatter="'{value}'" ></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 						<div class="form-group col-md-4">
-							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="wholesalerOptions"></vue-slider>
+							<label for="price-slider">Daily price range</label>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="sliderOptions" :min="0" :max="1000" :interval="10" ></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>											
 					</div>
@@ -150,7 +150,7 @@
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
 							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="wholesalerOptions"></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 					</div>
@@ -159,7 +159,7 @@
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
 							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="hotelOptions"></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="sliderOptions" :min="10" :max="150"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 					</div>
@@ -232,14 +232,7 @@ export default {
 			alreadyUser: false,
 			userInfo: {
 				address: { route: "", locality: "", administrative_area_level_1: "", country: "", postal_code: "null", latitude: null, longitude: null },
-				// fName: null,
-				// lName: null,
 				supplierName: null,
-				// city: null,
-				// state: null,
-				// country: null,
-				// zip: null,
-				// geo: { long: null, lat: null },
 				comments: null,
 				maxTravelers: 'Choose...',
 				roomsAvailable: null,
@@ -251,13 +244,9 @@ export default {
 				offerDate: null,
 				stars: 'Choose...',
 				filePDF: null,
-				// tel: null,
-				// email: null,
-				// password: null
 			},
 			// slider
-			// priceRange: [0, 50],
-			hotelOptions: {
+			sliderOptions: {
 				dotSize: 14,
 				width: 'auto',
 				height: 4,
@@ -266,16 +255,13 @@ export default {
 				data: null,
 				dataLabel: 'label',
 				dataValue: 'value',
-				min: 10,
-				max: 150,
-				interval: 1,
 				disabled: false,
 				clickable: true,
 				duration: 0.5,
 				adsorb: false,
 				lazy: false,
-				tooltip: 'active',
-				tooltipPlacement: 'top',
+				tooltip: 'always',
+				tooltipPlacement: 'bottom',
 				tooltipFormatter: '{value}€',
 				useKeyboard: false,
 				keydownHook: null,
@@ -297,48 +283,10 @@ export default {
 				stepActiveStyle: void 0,
 				labelStyle: void 0,
 				labelActiveStyle: void 0,
-			  },
-			  wholesalerOptions: {
-				dotSize: 14,
-				width: 'auto',
-				height: 4,
-				contained: false,
-				direction: 'ltr',
-				data: null,
-				dataLabel: 'label',
-				dataValue: 'value',
-				min: 0,
-				max: 2000,
-				interval: 10,
-				disabled: false,
-				clickable: true,
-				duration: 0.5,
-				adsorb: false,
-				lazy: false,
-				tooltip: 'active',
-				tooltipPlacement: 'top',
-				tooltipFormatter: '{value}€',
-				useKeyboard: false,
-				keydownHook: null,
-				dragOnClick: false,
-				enableCross: false,
-				fixed: false,
-				minRange: void 0,
-				maxRange: void 0,
-				order: true,
-				marks: false,
-				dotOptions: void 0,
-				dotAttrs: void 0,
-				process: true,
-				dotStyle: void 0,
-				railStyle: void 0,
-				processStyle: void 0,
-				tooltipStyle: void 0,
-				stepStyle: void 0,
-				stepActiveStyle: void 0,
-				labelStyle: void 0,
-				labelActiveStyle: void 0,
-      		}
+				// min: 10,
+				// max: 150,
+				// interval: 1,
+			},
 		}
   },
 mounted() {
