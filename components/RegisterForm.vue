@@ -231,7 +231,7 @@ export default {
 			isLoading: false,
 			alreadyUser: false,
 			userInfo: {
-				address: { route: "", locality: "", administrative_area_level_1: "", country: "", postal_code: "null", latitude: null, longitude: null },
+				address: { route: null, locality: null, administrative_area_level_1: null, country: null, postal_code: null, latitude: null, longitude: null },
 				supplierName: null,
 				comments: null,
 				maxTravelers: 'Choose...',
