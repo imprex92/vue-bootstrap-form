@@ -362,11 +362,13 @@ export default {
 
 				console.log('locality finns inte, tar från plan B');
 				this.userInfo.address = addressData
-				this.userInfo.address.locality = placeResultData.address_components[2].long_name
-				console.log(addressData);
-				console.log(placeResultData);
-				console.log(this.userInfo.address);
-				console.log(this.userInfo.address.country);
+				let findCity = placeResultData.address_components.find(el => el.types.includes("postal_town"));
+				this.userInfo.address.locality = findCity.long_name
+				console.log('this is the found city ', findCity.long_name );
+				// console.log(addressData);
+				// console.log(placeResultData);
+				// console.log(this.userInfo.address);
+				// console.log(this.userInfo.address.country);
 			}
 
 			//finns locality i addressdat?
