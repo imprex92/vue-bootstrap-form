@@ -8,8 +8,18 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Poppins&display=swap",
+      }
+    ],
+    script: [
+      {
+        src: 'https://www.jsdelivr.com/package/npm/vue-place-autocomplete',
+        src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyDHL-FHcfS_ZS5RrlZxvKSoT42-gTCxy_M&libraries=places"
+      }
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -18,6 +28,9 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+      {src: '~/plugins/vue-place-autocomplete.js', ssr: false},
+      {src: '~/plugins/vue-multiselect.js', ssr: false},
+      { src: '~plugins/vue-google-autocomplete', ssr: false }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -38,9 +51,19 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    proxy: true,
+    BaseURL: 'api/api/'
+  },
+  proxy: {
+    '/api/api/': 'http://localhost:3000'
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
-  }
+    transpile: [
+      'vue-place-autocomplete', 'VuePlaceAutocomplete', 'vue-google-autocomplete'
+    ]
+  },
+  
 }
