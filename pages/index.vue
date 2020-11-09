@@ -1,5 +1,5 @@
 <template>
-	<div class="container bg-warning">
+	<div class="container">
 		<RegisterForm />
 	</div>
 </template>
@@ -15,6 +15,7 @@ export default {
 .container {
 	margin: 0 auto;
 	min-height: 100vh;
+	margin-top: -20px;
 	/* display: flex; */
 	/* justify-content: center; */
 	/* align-items: center; */
