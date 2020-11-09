@@ -2,11 +2,11 @@
 	
 		<div class="container form-container m-auto">
 			<div v-show="registerSuccessful" class="">
-				<p class="successful-message">Thanks for registering. We also sent you a confirmation by email</p>
+				<p class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
 			</div>
 			<div v-show="showForm">
 				<div class="">
-					<p class="form-section-description">Information about yourself and company name</p>
+					<p class="form-section-description">Information about your company name</p>
 					<hr>
 				</div>
 			<form>
@@ -83,7 +83,7 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Enter comment or dates the offer is available"></textarea>
+						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Describe your business. We need relevant information about your services, special offers, dates and other selling points."></textarea>
 					</div>
 				</div>
 				<div class="form-row">
@@ -137,12 +137,12 @@
 					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
 						<div class="form-group col-md-4 pr-3">
 							<label for="seats-slider">Seats</label>
-							<vue-slider id="seats-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="sliderOptions" :tooltipFormatter="'{value}'" ></vue-slider>
+							<vue-slider id="seats-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="sliderOptions" :tooltipFormatter="'{value}'" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 						<div class="form-group col-md-4 ml-3">
 							<label for="price-slider">Daily price range</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="sliderOptions" :min="0" :max="1000" :interval="10" ></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="sliderOptions" :min="0" :max="1000" :interval="10" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>											
 					</div>
@@ -153,7 +153,7 @@
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
 							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000"></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 					</div>
@@ -162,7 +162,7 @@
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
 							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="sliderOptions" :min="10" :max="150"></vue-slider>
+							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="sliderOptions" :min="10" :max="150" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
 					</div>
