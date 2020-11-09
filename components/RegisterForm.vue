@@ -181,12 +181,26 @@
 						</client-only>
 					</div>
 				</div>
-				<!-- <div class="form-row">
-					<div class="form-group col-md-6">
-						<label for="create-userName">Enter E-mail</label>
-						<input autocomplete="password" v-model="userInfo.email" type="text" class="form-control" id="create-userName">
+				<div class="">
+					<p class="form-section-description">Contact details</p>
+					<hr>
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-3">
+						<label for="inputName">Name</label>
+						<input autocomplete="given-name" v-model="userInfo.name" type="text" class="form-control" id="inputName">
 					</div>
-				</div> -->
+					<div class="form-group col-md-3">
+						<label for="inputTel">Phone</label>
+						<input autocomplete="tel" v-model="userInfo.phone" type="text" class="form-control" id="inputTel">
+					</div>					
+				</div>
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label for="inputEmail">Enter E-mail</label>
+						<input autocomplete="email" v-model="userInfo.email" type="text" class="form-control" id="inputEmail">
+					</div>
+				</div>
   			<button @click.prevent="onSubmit" type="submit" class="btn btn-primary col-md-2 mt-2 mb-3">Submit</button>
 			</div>
 			</form>
@@ -247,6 +261,9 @@ export default {
 				busSettings: { busSeats: [10, 100], busPrice: [0, 1000] },	
 				stars: 'Choose...',
 				filePDF: null,
+				email: null,
+				name: null,
+				phone: null
 			},
 			// slider
 			sliderOptions: {
