@@ -1,5 +1,5 @@
 <template>
-	<div class="container p-3">
+	
 		<div class="container form-container m-auto">
 			<div v-show="registerSuccessful" class="">
 				<p class="successful-message">Thanks for registering. We also sent you a confirmation by email</p>
@@ -127,7 +127,7 @@
 						</select>
 					</div> 
 					<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
-						<label for="inputRooms">Rooms available</label>
+						<label for="inputRooms">Rooms</label>
 						<input v-model.number="userInfo.roomsAvailable" type="number" class="form-control" id="inputRooms" placeholder="Enter number">
 					</div>
 				</div>
@@ -198,7 +198,7 @@
 				
 			</div>
 		</div>
-	</div>
+	
 </template>
 
 <script>
@@ -342,9 +342,15 @@ mounted() {
 				console.log(placeResultData);
 				console.log(this.userInfo.address);
 				console.log(this.userInfo.address.country);
+				if(placeResultData.address_components.find(el => el.types.includes("postal_town"))){
+					console.log('inne i else och if');
 				let findCity = placeResultData.address_components.find(el => el.types.includes("postal_town"));
 				this.userInfo.address.locality = findCity.long_name
-				console.log('this is the found city ', findCity.long_name );
+				console.log('this is the found city ', findCity.long_name);
+				}else{
+					console.log('inne i failsafe');
+					this.userInfo.address = addressData
+				}
 			}
 
 			//finns locality i addressdat?
@@ -391,6 +397,13 @@ mounted() {
 </script>
 
 <style lang="css" scoped>
+button{
+	background-color: #253551;
+	color: #fff;
+}
+*{
+	font-family: 'Poppins', sans-serif;
+}
 .successful-message{
 	text-align: center;
 	margin: auto;
