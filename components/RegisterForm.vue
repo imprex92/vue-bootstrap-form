@@ -184,21 +184,8 @@ import VueSlider from 'vue-slider-component/dist-css/vue-slider-component.umd.mi
 import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import 'vue-slider-component/dist-css/vue-slider-component.css'
 import 'vue-slider-component/theme/default.css'
-import "vue-multiselect/dist/vue-multiselect.min.css"
-import { ajaxFindCountry } from './countriesApi'
 export default {
 	 head: {
-		script: [
-			{
-				src: 'https://www.jsdelivr.com/package/npm/vue-place-autocomplete'
-			}
-		],
-		link: [
-			{
-				rel: 'text/html',
-				href: 'https://www.jsdelivr.com/package/npm/vue-place-autocomplete'
-			}
-		]
   	},
 	components: {
 		VueSlider,
@@ -359,19 +346,7 @@ mounted() {
 			this.userInfo.filePDF = this.$refs.myFiles.files[0]
 			console.log(this.$refs.myFiles.files[0]);
 		},
-		limitText (count) {
-      return `and ${count} other countries`
-    },
-    asyncFind (query) {
-      this.isLoading = true
-      ajaxFindCountry(query).then(response => {
-        this.countries = response
-        this.isLoading = false
-      })
-    },
-    clearAll () {
-      this.selectedCountries = []
-    }
+		
   }
   	
 }
