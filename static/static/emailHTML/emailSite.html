@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<script>
+			var link = "http://www.google.com/";
+			document.getElementById('myLink').setAttribute("href",link);
+			document.getElementById('myLink').innerHTML = link;
+			// Here the link is your javascript variable that contains the url.
+		</script>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="description" content="Email template">
@@ -47,7 +53,7 @@
 				The production team will contact you if your offer matches our needs and interests. <br>
 				Please keep your registered information up to date. You can always update and maintain your entry by clicking the link below.
 			</p>
-			<a href="">Update info</a>
+			<a id="myLink" href="link">Update info</a>
 		</main>
 		<footer>
 			<p>
