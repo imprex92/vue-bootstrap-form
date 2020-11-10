@@ -17,7 +17,7 @@
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-2">
+					<div class="form-group col-md-3">
 						<label for="inputType">Type</label>
 						<select v-model="userInfo.type" id="inputType" class="form-control">
 							<option selected>Choose...</option>
@@ -26,6 +26,7 @@
 							<option>Bus company</option>
 							<option>Restaurant</option>
 							<option>Wholesaler</option>
+							<option>DMC</option>
 						</select>
 					</div>
 				</div>
@@ -83,19 +84,17 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
-						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Describe your business. We need relevant information about your services, special offers, dates and other selling points."></textarea>
+						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-6">
 						<div class="custom-file">
 							<input type="file" ref="myFiles" @change="previewFiles" class="custom-file-input" id="customFileLangHTML file" accept="application/pdf">
-							<label class="custom-file-label" for="customFileLangHTML" data-browse="Select file"><span v-if="this.userInfo.filePDF === null">Select a PDF file</span><span v-else>File selected!</span></label>
+							<label class="custom-file-label" for="customFileLangHTML" data-browse="Select file"><span v-if="this.userInfo.filePDF === null">Sales prospect as PDF (optional)</span><span v-else>File selected!</span></label>
 						</div>
 					</div>
 				</div>
-				
-
 				<div class="form-row hotel-section">
 					<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
 						<label for="inputStars">Stars</label>
@@ -110,7 +109,7 @@
 							<option>7 Stars</option>
 						</select>
 					</div>
-					<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel'" class="form-group col-md-3">
+					<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel' && userInfo.type !== 'DMC'" class="form-group col-md-3">
 						<label for="inputTravelers">Max travelers</label>
 						<select v-model="userInfo.maxTravelers" id="inputTravelers" class="form-control">
 							<option selected>Choose...</option>
@@ -132,7 +131,6 @@
 					</div>
 				</div>
 					<client-only>
-						<!-- TODO -->
 				<div v-if="userInfo.type === 'Bus company'">
 					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
 						<div class="form-group col-md-4 pr-3">
@@ -148,11 +146,10 @@
 					</div>
 				</div>
 					</client-only>
-
-				<div v-if="userInfo.type === 'Wholesaler'" class="from-row">
+				<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="from-row">
 					<div class="form-row col-md-12">
 						<div class="form-group col-md-4">
-							<label for="price-slider">Enter price range for groups</label>
+							<label for="price-slider">Enter price range for groups per person</label>
 							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 							<p>{{ userInfo.priceRange }}</p>
 						</div>
@@ -167,18 +164,10 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="userInfo.type === 'Wholesaler'" class="form-row wholeseller-section">
+				<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="mt-3 form-row wholeseller-section">
 					<div class="form-group col-md-6">
-						<client-only>
-							<label class="typo__label" for="ajax">Countries working with</label>
-							<multiselect v-model="userInfo.selectedCountries" id="ajax" label="name" track-by="code" placeholder="Type to search for a country" open-direction="bottom" :options="countries" :multiple="true" :searchable="true" :loading="isLoading" :internal-search="false" :clear-on-select="false" :close-on-select="false" :options-limit="300" :limit="3" :limit-text="limitText" :max-height="600" :show-no-results="false" :hide-selected="true" @search-change="asyncFind">
-								<template slot="tag" slot-scope="{ option, remove }"><span class="custom__tag"><span>{{ option.name }}</span><span class="custom__remove" @click="remove(option)">❌</span></span></template>
-								<template slot="clear" slot-scope="props">
-								<div class="multiselect__clear" v-if="userInfo.selectedCountries.length" @mousedown.prevent.stop="clearAll(props.search)"></div>
-								</template><span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
-							</multiselect>
-							<pre class="language-json"><code>{{ userInfo.selectedCountries  }}</code></pre>
-						</client-only>
+						<label class="typo__label" for="ajax">Active markets</label>
+						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify countries or regions."></textarea>
 					</div>
 				</div>
 				<div class="">
