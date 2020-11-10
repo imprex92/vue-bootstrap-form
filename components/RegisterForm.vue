@@ -1,207 +1,182 @@
-<template>
-	
-		<div class="container form-container m-auto">
-			<div v-show="registerSuccessful" class="">
-				<p class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
+<template>	
+	<div class="container form-container m-auto">
+		<div v-show="registerSuccessful" class="">
+			<p class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
+		</div>
+		<div v-show="showForm">
+			<div class="">
+				<p class="form-section-description">Information about your company name</p>
+				<hr>
 			</div>
-			<div v-show="showForm">
-				<div class="">
-					<p class="form-section-description">Information about your company name</p>
-					<hr>
+		<form>
+			<div class="form-row">
+				<div class="form-group col-md-4">
+					<label for="supplierName">Supplier name</label>
+					<input autocomplete="organization" v-model.lazy="userInfo.supplierName" type="text" class="form-control" id="supplierName">
 				</div>
-			<form>
-				<div class="form-row">
-					<div class="form-group col-md-4">
-						<label for="supplierName">Supplier name</label>
-						<input autocomplete="organization" v-model.lazy="userInfo.supplierName" type="text" class="form-control" id="supplierName">
-					</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="inputType">Type</label>
+					<select v-model="userInfo.type" id="inputType" class="form-control">
+						<option selected>Choose...</option>
+						<option>Hotel</option>
+						<option>Excursion provider</option>
+						<option>Bus company</option>
+						<option>Restaurant</option>
+						<option>Wholesaler</option>
+						<option>DMC</option>
+					</select>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label for="inputType">Type</label>
-						<select v-model="userInfo.type" id="inputType" class="form-control">
-							<option selected>Choose...</option>
-							<option>Hotel</option>
-							<option>Excursion provider</option>
-							<option>Bus company</option>
-							<option>Restaurant</option>
-							<option>Wholesaler</option>
-							<option>DMC</option>
-						</select>
-					</div>
+			</div>
+		<div v-if="userInfo.type !== 'Choose...'">
+			<div>
+				<p class="form-section-description">Information about <span v-if="userInfo.supplierName === null || userInfo.supplierName === ''">your company</span><span v-else>{{userInfo.supplierName}}</span></p>
+				<hr>
+			</div>
+			<div class="form-group">
+				<label for="map">Address</label>
+				<client-only>
+					<vue-google-autocomplete
+					id="map"
+					autocomplete="address-line1"
+					ref="userInfo.address"
+					classname="form-control"
+					placeholder="Start typing"
+					v-on:placechanged="getAddressData"
+					v-model="userInfo.address.route">
+					</vue-google-autocomplete>
+				</client-only>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="inputCity">City</label>
+					<input autocomplete="address-level2" v-model="userInfo.address.locality" type="text" class="form-control" id="inputCity">
 				</div>
-			<div v-if="userInfo.type !== 'Choose...'">
-				<div>
-					<p class="form-section-description">Information about <span v-if="userInfo.supplierName === null || userInfo.supplierName === ''">your company</span><span v-else>{{userInfo.supplierName}}</span></p>
-					<hr>
+				<div class="form-group col-md-3">
+					<label for="inputState">State</label>
+					<input autocomplete="address-level1" v-model="userInfo.address.administrative_area_level_1" type="text" class="form-control" id="inputState">
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-					
-					</div>
-					<div class="message is-success" v-show="userInfo.address">
-                <div class="message-body">{{ userInfo.address }}</div>
-            </div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="inputZip">Zip</label>
+					<input autocomplete="postal-code" v-model="userInfo.address.postal_code" type="text" class="form-control" id="inputZip">
 				</div>
-						<hr>
-					<div class="form-group">
-						<label for="map">Address</label>
-						<client-only>
-						<vue-google-autocomplete
-						id="map"
-						autocomplete="address-line1"
-						ref="userInfo.address"
-						classname="form-control"
-						placeholder="Start typing"
-						v-on:placechanged="getAddressData"
-						v-model="userInfo.address.route">
-						</vue-google-autocomplete>
-						</client-only>
-					</div>
-					<!-- <div class="form-group">
-						<label for="inputAddress2">Address 2</label>
-						<input autocomplete="address-line2" type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-					</div> -->
-				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label for="inputCity">City</label>
-						<input autocomplete="address-level2" v-model="userInfo.address.locality" type="text" class="form-control" id="inputCity">
-					</div>
-					<div class="form-group col-md-3">
-						<label for="inputState">State</label>
-						<input autocomplete="address-level1" v-model="userInfo.address.administrative_area_level_1" type="text" class="form-control" id="inputState">
-					</div>
+				<div class="form-group col-md-3">
+					<label for="inputCountry">Country</label>
+					<input autocomplete="country-name" v-model="userInfo.address.country" type="text" class="form-control" id="inputCountry">
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label for="inputZip">Zip</label>
-						<input autocomplete="postal-code" v-model="userInfo.address.postal_code" type="text" class="form-control" id="inputZip">
-					</div>
-					<div class="form-group col-md-3">
-						<label for="inputCountry">Country</label>
-						<input autocomplete="country-name" v-model="userInfo.address.country" type="text" class="form-control" id="inputCountry">
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<div class="custom-file">
+						<input type="file" ref="myFiles" @change="previewFiles" class="custom-file-input" id="customFileLangHTML file" accept="application/pdf">
+						<label class="custom-file-label" for="customFileLangHTML" data-browse="Select file"><span v-if="this.userInfo.filePDF === null">Sales prospect as PDF (optional)</span><span v-else>File selected!</span></label>
 					</div>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
-					</div>
+			</div>
+			<div class="form-row hotel-section">
+				<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
+					<label for="inputStars">Stars</label>
+					<select v-model="userInfo.stars" id="inputStars" class="form-control">
+						<option selected>Choose...</option>
+						<option>1 Star</option>
+						<option>2 Stars</option>
+						<option>3 Stars</option>
+						<option>4 Stars</option>
+						<option>5 Stars</option>
+						<option>6 Stars</option>
+						<option>7 Stars</option>
+					</select>
 				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<div class="custom-file">
-							<input type="file" ref="myFiles" @change="previewFiles" class="custom-file-input" id="customFileLangHTML file" accept="application/pdf">
-							<label class="custom-file-label" for="customFileLangHTML" data-browse="Select file"><span v-if="this.userInfo.filePDF === null">Sales prospect as PDF (optional)</span><span v-else>File selected!</span></label>
-						</div>
-					</div>
+				<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel' && userInfo.type !== 'DMC'" class="form-group col-md-3">
+					<label for="inputTravelers">Max travelers</label>
+					<select v-model="userInfo.maxTravelers" id="inputTravelers" class="form-control">
+						<option selected>Choose...</option>
+						<option>10 travelers</option>
+						<option>20 travelers</option>
+						<option>30 travelers</option>
+						<option>40 travelers</option>
+						<option>50 travelers</option>
+						<option>60 travelers</option>
+						<option>70 travelers</option>
+						<option>80 travelers</option>
+						<option>90 travelers</option>
+						<option>90+ travelers</option>
+					</select>
+				</div> 
+				<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
+					<label for="inputRooms">Rooms</label>
+					<input v-model.number="userInfo.roomsAvailable" type="number" class="form-control" id="inputRooms" placeholder="Enter number">
 				</div>
-				<div class="form-row hotel-section">
-					<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
-						<label for="inputStars">Stars</label>
-						<select v-model="userInfo.stars" id="inputStars" class="form-control">
-							<option selected>Choose...</option>
-							<option>1 Star</option>
-							<option>2 Stars</option>
-							<option>3 Stars</option>
-							<option>4 Stars</option>
-							<option>5 Stars</option>
-							<option>6 Stars</option>
-							<option>7 Stars</option>
-						</select>
-					</div>
-					<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel' && userInfo.type !== 'DMC'" class="form-group col-md-3">
-						<label for="inputTravelers">Max travelers</label>
-						<select v-model="userInfo.maxTravelers" id="inputTravelers" class="form-control">
-							<option selected>Choose...</option>
-							<option>10 travelers</option>
-							<option>20 travelers</option>
-							<option>30 travelers</option>
-							<option>40 travelers</option>
-							<option>50 travelers</option>
-							<option>60 travelers</option>
-							<option>70 travelers</option>
-							<option>80 travelers</option>
-							<option>90 travelers</option>
-							<option>90+ travelers</option>
-						</select>
-					</div> 
-					<div v-if="userInfo.type === 'Hotel'" class="form-group col-md-2">
-						<label for="inputRooms">Rooms</label>
-						<input v-model.number="userInfo.roomsAvailable" type="number" class="form-control" id="inputRooms" placeholder="Enter number">
-					</div>
-				</div>
-					<client-only>
+			</div>
+			<client-only>
 				<div v-if="userInfo.type === 'Bus company'">
 					<div class="form-row bus-section mb-3 mt-3 col-md-12">							
 						<div class="form-group col-md-4 pr-3">
-							<label for="seats-slider">Seats</label>
+							<label for="seats-slider">Bus size (seats min/max)</label>
 							<vue-slider id="seats-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busSeats" v-bind="sliderOptions" :tooltipFormatter="'{value}'" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
-							<p>{{ userInfo.priceRange }}</p>
 						</div>
 						<div class="form-group col-md-4 ml-3">
 							<label for="price-slider">Daily price range</label>
 							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.busSettings.busPrice" v-bind="sliderOptions" :min="0" :max="1000" :interval="10" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
-							<p>{{ userInfo.priceRange }}</p>
 						</div>											
 					</div>
 				</div>
-					</client-only>
-				<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="from-row">
-					<div class="form-row col-md-12">
-						<div class="form-group col-md-4">
-							<label for="price-slider">Enter price range for groups per person</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
-							<p>{{ userInfo.priceRange }}</p>
-						</div>
+			</client-only>
+			<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="from-row">
+				<div class="form-row col-md-12">
+					<div class="form-group col-md-4">
+						<label for="price-slider">Enter price range for groups per person</label>
+						<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.wholePriceRange" v-bind="sliderOptions" :interval="10" :min="0" :max="2000" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
 					</div>
 				</div>
-				<div v-if="userInfo.type === 'Hotel'" class="from-row">
-					<div class="form-row col-md-12">
-						<div class="form-group col-md-4">
-							<label for="price-slider">Enter price range for groups</label>
-							<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="sliderOptions" :min="10" :max="150" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
-							<p>{{ userInfo.priceRange }}</p>
-						</div>
-					</div>
-				</div>
-				<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="mt-3 form-row wholeseller-section">
-					<div class="form-group col-md-6">
-						<label class="typo__label" for="ajax">Active markets</label>
-						<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify countries or regions."></textarea>
-					</div>
-				</div>
-				<div class="">
-					<p class="form-section-description">Contact details</p>
-					<hr>
-				</div>
-				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label for="inputName">Name</label>
-						<input autocomplete="given-name" v-model="userInfo.name" type="text" class="form-control" id="inputName">
-					</div>
-					<div class="form-group col-md-3">
-						<label for="inputTel">Phone</label>
-						<input autocomplete="tel" v-model="userInfo.phone" type="text" class="form-control" id="inputTel">
-					</div>					
-				</div>
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label for="inputEmail">Enter E-mail</label>
-						<input autocomplete="email" v-model="userInfo.email" type="text" class="form-control" id="inputEmail">
-					</div>
-				</div>
-  			<button @click.prevent="onSubmit" type="submit" class="btn btn-primary col-md-2 mt-2 mb-3">Submit</button>
 			</div>
-			</form>
-			
+			<div v-if="userInfo.type === 'Hotel'" class="from-row">
+				<div class="form-row col-md-12">
+					<div class="form-group col-md-4">
+						<label for="price-slider">Enter price range for groups</label>
+						<vue-slider id="price-slider" class="col-md-12" ref="slider" v-model="userInfo.hotelPriceRange" v-bind="sliderOptions" :min="10" :max="150" :process-style="{ backgroundColor: '#253551' }" :tooltip-style="{ backgroundColor: '#253551', borderColor: '#253551' }"></vue-slider>
+					</div>
+				</div>
 			</div>
-			<!-- <div>{{userInfo}}</div> -->
-			<div>
-				<!-- <multiselect v-model="multiselectValue" :options="multiselectOptions"></multiselect> -->
-				
+			<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="mt-3 form-row wholeseller-section">
+				<div class="form-group col-md-6">
+					<label class="typo__label" for="inputActiveMarkets">Active markets</label>
+					<textarea v-model="userInfo.activeMarkets" id="inputActiveMarkets" class="form-control" rows="3" placeholder="Specify countries or regions."></textarea>
+				</div>
 			</div>
+			<div class="">
+				<p class="form-section-description">Contact details</p>
+				<hr>
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-3">
+					<label for="inputName">Name</label>
+					<input autocomplete="given-name" v-model="userInfo.name" type="text" class="form-control" id="inputName">
+				</div>
+				<div class="form-group col-md-3">
+					<label for="inputTel">Phone</label>
+					<input autocomplete="tel" v-model="userInfo.phone" type="text" class="form-control" id="inputTel">
+				</div>					
+			</div>
+			<div class="form-row">
+				<div class="form-group col-md-6">
+					<label for="inputEmail">Enter E-mail</label>
+					<input autocomplete="email" v-model="userInfo.email" type="text" class="form-control" id="inputEmail">
+				</div>
+			</div>
+		<button @click.prevent="onSubmit" type="submit" class="btn btn-primary col-md-2 mt-2 mb-3">Submit</button>
 		</div>
-	
+		</form>		
+		</div>
+	</div>	
 </template>
 
 <script>
@@ -246,7 +221,7 @@ export default {
 				hotelPriceRange: [10, 150],
 				wholePriceRange: [0, 2000],
 				type: 'Choose...',
-				selectedCountries: [],
+				activeMarkets: null,
 				busSettings: { busSeats: [10, 100], busPrice: [0, 1000] },	
 				stars: 'Choose...',
 				filePDF: null,
