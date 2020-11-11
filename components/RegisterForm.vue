@@ -28,6 +28,7 @@
 						<option>Restaurant</option>
 						<option>Wholesaler</option>
 						<option>DMC</option>
+						<option>Local guide</option>
 					</select>
 				</div>
 			</div>
@@ -72,10 +73,10 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<textarea :class="status($v.userInfo.comments)" v-model.trim="$v.userInfo.comments.$model" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
+					<textarea :class="status($v.userInfo.comments)" v-model.trim="$v.userInfo.comments.$model" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. rewards, free nights, free meals, and other volume discounts."></textarea>
 				</div>
 			</div>
-			<div class="form-row">
+			<div v-if="userInfo.type !== 'Local guide'" class="form-row">
 				<div class="form-group col-md-6">
 					<div class="custom-file">
 						<input type="file" ref="myFiles" @change="previewFiles" class="custom-file-input" id="customFileLangHTML file" accept="application/pdf">
@@ -97,7 +98,7 @@
 						<option>7 Stars</option>
 					</select>
 				</div>
-				<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel' && userInfo.type !== 'DMC'" class="form-group col-md-3">
+				<div v-if="userInfo.type !== 'Wholesaler' && userInfo.type !== 'Choose...' && userInfo.type !== 'Hotel' && userInfo.type !== 'DMC' && userInfo.type !== 'Local guide'" class="form-group col-md-3">
 					<label for="inputTravelers">Max travelers</label>
 					<select v-model="userInfo.maxTravelers" id="inputTravelers" class="form-control">
 						<option selected>Choose...</option>
@@ -148,7 +149,7 @@
 					</div>
 				</div>
 			</div>
-			<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC'" class="mt-3 form-row wholeseller-section">
+			<div v-if="userInfo.type === 'Wholesaler' || userInfo.type === 'DMC' || userInfo.type === 'Local guide'" class="mt-3 form-row wholeseller-section">
 				<div class="form-group col-md-6">
 					<label class="typo__label" for="inputActiveMarkets">Active markets</label>
 					<textarea v-model="userInfo.activeMarkets" id="inputActiveMarkets" class="form-control" rows="3" placeholder="Specify countries or regions."></textarea>
