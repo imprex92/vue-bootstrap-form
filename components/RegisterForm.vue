@@ -7,7 +7,7 @@
 		
 		<div v-show="showForm">
 			<div class="">
-				<p class="form-section-description">Information about your company name</p>
+				<p class="form-section-description">Information about your company</p>
 				<hr>
 			</div>
 		<form>
