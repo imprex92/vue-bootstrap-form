@@ -1,10 +1,7 @@
 <template>	
 	<div class="container form-container m-auto">
-		
 			<p v-show="registerSuccessful" class="successful-message">{{broadastMessage}}</p>
 			<p v-show="registerError" class="successful-message">{{broadastMessage}}</p>
-	
-		
 		<div v-show="showForm">
 			<input v-model="userInfo.id" type="hidden" id="custId" name="custId" value="">
 			<div class="">
@@ -20,7 +17,6 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-3">
-					
 					<label for="inputType">Type</label>
 					<select v-model="userInfo.type" id="inputType" class="form-control">
 						<option selected>Choose...</option>
@@ -278,32 +274,20 @@ export default {
 						}
 					},
 mounted() {
-	console.log('Goodmorning');
 	if(this.$route.query.id){
-		console.log('id found! ', this.$route.query.id);
 		this.userID = this.$route.query.id
 		this.$axios.get(`https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-get/${this.userID}`)
 			.then((Response) => {
-				console.log(Response)
-				console.log(`Successfully found user ${this.userID}!`)
 				if(Response.data.success){
-					console.log(Response.data.data);
 					Response.data.data.id = this.userID
 					this.userInfo = Response.data.data
-					// document.getElementById('custId').value = this.userID
-				console.log(this.userInfo);
 				}else{
-					console.log('something is wrong');
-					alert('User does not exist!');
 					this.userExisting = false
 					}
 			})
 			.catch((err) => {
-				console.log(err)
-				console.log('User does not exist ', err)
 			})
 	}else{
-		console.log('User does not exist! ', this.$route.query.id);
 	}
   },
   	methods: {
@@ -316,71 +300,40 @@ mounted() {
 	   
 		getAddressData(addressData, placeResultData, id) {
 			if(addressData.locality){
-				console.log('locality finns redan mer!');
 				this.userInfo.address = addressData
-				console.log(addressData);
-				console.log(placeResultData);
-				console.log(this.userInfo.address);
-				console.log(this.userInfo.address.country);
 			}
 			else{
-
-				console.log('locality finns inte, tar från plan B');
 				this.userInfo.address = addressData
-				console.log(addressData);
-				console.log(placeResultData);
-				console.log(this.userInfo.address);
-				console.log(this.userInfo.address.country);
 				if(placeResultData.address_components.find(el => el.types.includes("postal_town"))){
-					console.log('inne i else och if');
 				let findCity = placeResultData.address_components.find(el => el.types.includes("postal_town"));
 				this.userInfo.address.locality = findCity.long_name
-				console.log('this is the found city ', findCity.long_name);
 				}else{
-					console.log('inne i failsafe');
 					this.userInfo.address = addressData
 				}
 			}
-
-			//finns locality i addressdat?
-			//om ej gå igenom placeresultdata och leta efter sublocality
-			//skapa adressdata.locality = sublocality
     	},
-		created: function (){
-			console.log('Goodmorning');
-		},
 		onSubmit(){
 			// Validation check
 			this.$v.userInfo.$touch();
-			console.log(this.$v.userInfo.$error);
 			if(!this.$v.userInfo.$error){
-				console.log('skickar skiten!');
-				console.log(this.userInfo);
-				console.log(this.userID);
 				this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
 					.then((Response) => {
 						if(Response.data.success){
-						console.log('response from server', Response)
 						this.showForm = false
 						this.registerSuccessful = true
 						this.broadastMessage = Response.data.text
 						}else if(!Response.data.success){
-							console.log('response from server', Response)
 							this.showForm = false
 							this.registerError = true
 						}
 					})
 					.catch((err) => {
-						console.log(err)
-						alert('Something went wrong ', err)
 					})
 				}else{
-					console.log('något har gott åt helvete');
 				}
 		},
 		previewFiles(){
 			this.userInfo.filePDF = this.$refs.myFiles.files[0]
-			console.log(this.$refs.myFiles.files[0]);
 		},
 		status(validation) {
     	return {
