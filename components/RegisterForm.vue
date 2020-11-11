@@ -347,7 +347,9 @@ mounted() {
 		onSubmit(){
 			// Validation check
 			this.$v.userInfo.$touch();
-			if(this.$v.userInfo.$error){
+			console.log(this.$v.userInfo.$error);
+			if(!this.$v.userInfo.$error){
+				console.log('skickar skiten!');
 				console.log(this.userInfo);
 				this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
 					.then((Response) => {
@@ -365,6 +367,8 @@ mounted() {
 						console.log(err)
 						alert('Something went wrong ', err)
 					})
+				}else{
+					console.log('något har gott åt helvete');
 				}
 		},
 		previewFiles(){
