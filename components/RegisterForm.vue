@@ -1,8 +1,10 @@
 <template>	
 	<div class="container form-container m-auto">
-		<div v-show="registerSuccessful" class="">
-			<p class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
-		</div>
+		
+			<p v-show="registerSuccessful" class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
+			<p v-show="registerError" class="successful-message">Something went wrong! Please try again later.</p>
+	
+		
 		<div v-show="showForm">
 			<div class="">
 				<p class="form-section-description">Information about your company name</p>
@@ -11,8 +13,8 @@
 		<form>
 			<div class="form-row">
 				<div class="form-group col-md-4">
-					<label for="supplierName">Supplier name</label>
-					<input autocomplete="organization" v-model.lazy="userInfo.supplierName" type="text" class="form-control" id="supplierName">
+						<label for="supplierName">Supplier name</label>
+						<input :class="status($v.userInfo.supplierName)" v-model.lazy.trim="$v.userInfo.supplierName.$model" autocomplete="organization" type="text" class="form-control" id="supplierName">
 				</div>
 			</div>
 			<div class="form-row">
@@ -70,7 +72,7 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<textarea v-model="userInfo.comments" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
+					<textarea :class="status($v.userInfo.comments)" v-model.trim="$v.userInfo.comments.$model" name="" id="" class="form-control" rows="3" placeholder="Specify your subsidies for tour operators. E.g. free nights, kickback per guests, free dinners, and other volume discounts."></textarea>
 				</div>
 			</div>
 			<div class="form-row">
@@ -159,17 +161,17 @@
 			<div class="form-row">
 				<div class="form-group col-md-3">
 					<label for="inputName">Name</label>
-					<input autocomplete="given-name" v-model="userInfo.name" type="text" class="form-control" id="inputName">
+					<input autocomplete="given-name" :class="status($v.userInfo.name)" v-model.trim="$v.userInfo.name.$model" type="text" class="form-control" id="inputName">
 				</div>
 				<div class="form-group col-md-3">
 					<label for="inputTel">Phone</label>
-					<input autocomplete="tel" v-model="userInfo.phone" type="text" class="form-control" id="inputTel">
+					<input autocomplete="tel" :class="status($v.userInfo.phone)" v-model.lazy.trim="$v.userInfo.phone.$model" type="text" class="form-control" id="inputTel">
 				</div>					
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-6">
 					<label for="inputEmail">Enter E-mail</label>
-					<input autocomplete="email" v-model="userInfo.email" type="text" class="form-control" id="inputEmail">
+					<input autocomplete="email" :class="status($v.userInfo.email)" v-model.lazy.trim="$v.userInfo.email.$model" type="text" class="form-control" id="inputEmail">
 				</div>
 			</div>
 		<button @click.prevent="onSubmit" type="submit" class="btn btn-primary col-md-2 mt-2 mb-3">Submit</button>
@@ -184,6 +186,8 @@ import VueSlider from 'vue-slider-component/dist-css/vue-slider-component.umd.mi
 import VueGoogleAutocomplete from 'vue-google-autocomplete'
 import 'vue-slider-component/dist-css/vue-slider-component.css'
 import 'vue-slider-component/theme/default.css'
+import { required, email, minLength } from "vuelidate/lib/validators";
+
 export default {
 	 head: {
   	},
@@ -198,6 +202,7 @@ export default {
 			countries: [],
 			isLoading: false,
 			registerSuccessful: false,
+			registerError: false,
 			showForm: true,
 			userInfo: {
 				address: { route: null, locality: null, administrative_area_level_1: null, country: null, postal_code: null, latitude: null, longitude: null },
@@ -260,6 +265,15 @@ export default {
 			},
 		}
   },
+					validations:{
+						userInfo: {
+							supplierName: {required},
+							comments: {required},
+							email: {required, email},
+							name: {required, min: minLength(2)},
+							phone: {required},
+						}
+					},
 mounted() {
 	console.log('Goodmorning');
 	if(this.$route.query.id){
@@ -293,6 +307,7 @@ mounted() {
         * @param {Object} placeResultData PlaceResult object
         * @param {String} id Input container ID
         */
+	   
 		getAddressData(addressData, placeResultData, id) {
 			if(addressData.locality){
 				console.log('locality finns redan mer!');
@@ -329,24 +344,38 @@ mounted() {
 			console.log('Goodmorning');
 		},
 		onSubmit(){
-			console.log(this.userInfo);
-			this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
-				.then((Response) => {
-					console.log(Response)
-					// alert('Successful!')
-					this.showForm = false
-					this.registerSuccessful = true
-				})
-				.catch((err) => {
-					console.log(err)
-					alert('Something went wrong ', err)
-				})
+			// Validation check
+			this.$v.userInfo.$touch();
+			if(this.$v.userInfo.$error){
+				console.log(this.userInfo);
+				this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
+					.then((Response) => {
+						if(Response.data.success){
+						console.log('response from server', Response)
+						this.showForm = false
+						this.registerSuccessful = true
+						}else if(!Response.data.success){
+							console.log('response from server', Response)
+							this.showForm = false
+							this.registerError = true
+						}
+					})
+					.catch((err) => {
+						console.log(err)
+						alert('Something went wrong ', err)
+					})
+				}
 		},
 		previewFiles(){
 			this.userInfo.filePDF = this.$refs.myFiles.files[0]
 			console.log(this.$refs.myFiles.files[0]);
 		},
-		
+		status(validation) {
+    	return {
+      	error: validation.$error,
+        dirty: validation.$dirty
+      }
+    }
   }
   	
 }
@@ -400,5 +429,9 @@ hr{
 .remove-button{
 	height: 1em;
 	cursor: pointer;
+}
+.error{
+	border-color: red;
+  background: #FDD;
 }
 </style> 
