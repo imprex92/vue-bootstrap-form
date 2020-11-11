@@ -6,6 +6,7 @@
 	
 		
 		<div v-show="showForm">
+			<input v-model="userInfo.id" type="hidden" id="custId" name="custId" value="">
 			<div class="">
 				<p class="form-section-description">Information about your company</p>
 				<hr>
@@ -19,6 +20,7 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group col-md-3">
+					
 					<label for="inputType">Type</label>
 					<select v-model="userInfo.type" id="inputType" class="form-control">
 						<option selected>Choose...</option>
@@ -206,6 +208,7 @@ export default {
 			registerError: false,
 			showForm: true,
 			userInfo: {
+				id: null,
 				address: { route: null, locality: null, administrative_area_level_1: null, country: null, postal_code: null, latitude: null, longitude: null },
 				supplierName: null,
 				comments: null,
@@ -285,7 +288,10 @@ mounted() {
 				console.log(Response)
 				console.log(`Successfully found user ${this.userID}!`)
 				if(Response.data.success){
-				this.userInfo = Response.data.data
+					console.log(Response.data.data);
+					Response.data.data.id = this.userID
+					this.userInfo = Response.data.data
+					// document.getElementById('custId').value = this.userID
 				console.log(this.userInfo);
 				}else{
 					console.log('something is wrong');
@@ -351,6 +357,7 @@ mounted() {
 			if(!this.$v.userInfo.$error){
 				console.log('skickar skiten!');
 				console.log(this.userInfo);
+				console.log(this.userID);
 				this.$axios.post('https://api.rolfsbuss.se/rolfsapi/v2/web/sv/supplier-register', this.userInfo)
 					.then((Response) => {
 						if(Response.data.success){
