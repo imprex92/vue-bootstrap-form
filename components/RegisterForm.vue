@@ -1,8 +1,8 @@
 <template>	
 	<div class="container form-container m-auto">
 		
-			<p v-show="registerSuccessful" class="successful-message">Thanks for registering. A confirmation has been sent to your e-mail.</p>
-			<p v-show="registerError" class="successful-message">Something went wrong! Please try again later.</p>
+			<p v-show="registerSuccessful" class="successful-message">{{broadastMessage}}</p>
+			<p v-show="registerError" class="successful-message">{{broadastMessage}}</p>
 	
 		
 		<div v-show="showForm">
@@ -200,10 +200,9 @@ export default {
 	},
  	data() {
 		return {
-			userExisting: true,
 			userID: null,
-			countries: [],
-			isLoading: false,
+			broadastMessage: null,
+			userExisting: true,
 			registerSuccessful: false,
 			registerError: false,
 			showForm: true,
@@ -364,6 +363,7 @@ mounted() {
 						console.log('response from server', Response)
 						this.showForm = false
 						this.registerSuccessful = true
+						this.broadastMessage = Response.data.text
 						}else if(!Response.data.success){
 							console.log('response from server', Response)
 							this.showForm = false
